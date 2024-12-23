@@ -1,6 +1,5 @@
 import streamlit as st
-import plotly.express as px
-import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import datetime, timedelta
 from utils.stock_data import get_stock_data
@@ -35,20 +34,22 @@ def render_pair_analysis():
                 col3.metric("Retorno Total", f"R$ {analysis['Total_Return']:.2f}")
                 col4.metric("Correlação", f"{analysis['Correlation']:.2f}")
                 
-                # Plot spread chart
+                # Plot spread chart using matplotlib
                 df = pd.DataFrame({
                     'Data': stock_data_a.index,
                     'Spread': (stock_data_a - stock_data_b).abs()
                 })
                 
-                fig = px.line(
-                    df,
-                    x='Data',
-                    y='Spread',
-                    title=f'Spread {stock_a}/{stock_b}'
-                )
-                fig.add_hline(y=spread_min, line_dash="dash", line_color="red")
-                st.plotly_chart(fig, use_container_width=True)
+                fig, ax = plt.subplots(figsize=(10, 6))
+                ax.plot(df['Data'], df['Spread'])
+                ax.axhline(y=spread_min, color='r', linestyle='--')
+                ax.set_title(f'Spread {stock_a}/{stock_b}')
+                ax.set_xlabel('Data')
+                ax.set_ylabel('Spread (R$)')
+                plt.xticks(rotation=45)
+                plt.tight_layout()
+                
+                st.pyplot(fig)
                 
         except Exception as e:
             st.error(f"Erro na análise: {str(e)}")

@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import matplotlib.pyplot as plt
 from itertools import combinations
 from datetime import datetime, timedelta
 from utils.stock_data import get_stock_data
@@ -56,13 +56,16 @@ def render_ranking():
                     
                     st.dataframe(df_ranking)
                     
-                    fig = px.bar(
-                        df_ranking,
-                        x='Pair',
-                        y=criteria_map[ranking_criteria],
-                        title=f'Comparação de Pares por {ranking_criteria}'
-                    )
-                    st.plotly_chart(fig, use_container_width=True)
+                    # Plot ranking using matplotlib
+                    fig, ax = plt.subplots(figsize=(10, 6))
+                    ax.bar(df_ranking['Pair'], df_ranking[criteria_map[ranking_criteria]])
+                    ax.set_title(f'Comparação de Pares por {ranking_criteria}')
+                    ax.set_xlabel('Par')
+                    ax.set_ylabel(ranking_criteria)
+                    plt.xticks(rotation=45)
+                    plt.tight_layout()
+                    
+                    st.pyplot(fig)
                     
         except Exception as e:
             st.error(f"Erro ao gerar ranking: {str(e)}")
