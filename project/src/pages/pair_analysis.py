@@ -1,9 +1,9 @@
 import streamlit as st
-import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import datetime, timedelta
 from src.utils.stock_data import get_stock_data
-from src.utils.spread_analysis import analyze_pair, calculate_potential_returns
+from src.utils.spread_analysis import analyze_pair
+from src.utils.visualization import create_spread_chart
 
 def render_pair_analysis():
     st.subheader("📊 Análise de Par Específico")
@@ -34,21 +34,13 @@ def render_pair_analysis():
                 col3.metric("Retorno Total", f"R$ {analysis['Total_Return']:.2f}")
                 col4.metric("Correlação", f"{analysis['Correlation']:.2f}")
                 
-                # Plot spread chart using matplotlib
+                # Create and display spread chart
                 df = pd.DataFrame({
                     'Data': stock_data_a.index,
                     'Spread': (stock_data_a - stock_data_b).abs()
                 })
                 
-                fig, ax = plt.subplots(figsize=(10, 6))
-                ax.plot(df['Data'], df['Spread'])
-                ax.axhline(y=spread_min, color='r', linestyle='--')
-                ax.set_title(f'Spread {stock_a}/{stock_b}')
-                ax.set_xlabel('Data')
-                ax.set_ylabel('Spread (R$)')
-                plt.xticks(rotation=45)
-                plt.tight_layout()
-                
+                fig = create_spread_chart(df, spread_min, stock_a, stock_b)
                 st.pyplot(fig)
                 
         except Exception as e:

@@ -1,11 +1,9 @@
 import streamlit as st
-import os
+from config.settings import PROJECT_ROOT, SRC_DIR
 import sys
 
-# Adiciona o diretório raiz do projeto ao PYTHONPATH
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(current_dir)
-sys.path.insert(0, project_root)
+# Adiciona os diretórios necessários ao PYTHONPATH
+sys.path.extend([PROJECT_ROOT, SRC_DIR])
 
 from src.pages.pair_analysis import render_pair_analysis
 from src.pages.ranking import render_ranking
