@@ -3,8 +3,8 @@ import pandas as pd
 import plotly.express as px
 from itertools import combinations
 from datetime import datetime, timedelta
-from ..utils.stock_data import get_stock_data
-from ..utils.spread_analysis import analyze_pair
+from utils.stock_data import get_stock_data
+from utils.spread_analysis import analyze_pair
 
 def render_ranking():
     st.subheader("🏆 Ranking dos Melhores Pares")

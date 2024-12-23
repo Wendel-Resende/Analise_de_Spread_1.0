@@ -1,9 +1,10 @@
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+import pandas as pd
 from datetime import datetime, timedelta
-from ..utils.stock_data import get_stock_data
-from ..utils.spread_analysis import analyze_pair, calculate_potential_returns
+from utils.stock_data import get_stock_data
+from utils.spread_analysis import analyze_pair, calculate_potential_returns
 
 def render_pair_analysis():
     st.subheader("📊 Análise de Par Específico")
