@@ -2,8 +2,8 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import datetime, timedelta
-from utils.stock_data import get_stock_data
-from utils.spread_analysis import analyze_pair, calculate_potential_returns
+from src.utils.stock_data import get_stock_data
+from src.utils.spread_analysis import analyze_pair, calculate_potential_returns
 
 def render_pair_analysis():
     st.subheader("📊 Análise de Par Específico")

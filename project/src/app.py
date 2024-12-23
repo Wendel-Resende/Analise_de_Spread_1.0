@@ -1,6 +1,13 @@
 import streamlit as st
-from pages.pair_analysis import render_pair_analysis
-from pages.ranking import render_ranking
+import sys
+from pathlib import Path
+
+# Add the project root directory to Python path
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root))
+
+from src.pages.pair_analysis import render_pair_analysis
+from src.pages.ranking import render_ranking
 
 def main():
     st.set_page_config(
