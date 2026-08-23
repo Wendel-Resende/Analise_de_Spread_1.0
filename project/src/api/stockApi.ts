@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { PairAnalysis } from '../types/stock';
 
-const API_URL = 'https://your-backend-api.com'; // You'll need to replace this with your actual API endpoint
+const API_URL = import.meta.env.VITE_API_URL ?? '/api';
 
 export const analyzePair = async (
   stockA: string,

@@ -3,8 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from itertools import combinations
 from datetime import datetime, timedelta
-from utils.stock_data import get_stock_data
-from utils.spread_analysis import analyze_pair
+from src.utils.stock_data import get_stock_data
+from src.utils.spread_analysis import analyze_pair
 
 def render_ranking():
     st.subheader("🏆 Ranking dos Melhores Pares")
