@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import Plot from 'react-plotly.js';
 import { format } from 'date-fns';
 import { PairAnalysis } from '../types/stock';
 import { analyzePair } from '../api/stockApi';
+
+const Plot = lazy(() => import('react-plotly.js'));
 
 export const StockPairAnalyzer: React.FC = () => {
   const [stockA, setStockA] = useState('PETR3');
@@ -14,13 +15,11 @@ export const StockPairAnalyzer: React.FC = () => {
   const startDate = format(new Date(Date.now() - 365 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');
   const endDate = format(new Date(), 'yyyy-MM-dd');
 
-  const { data, isLoading, error } = useQuery<PairAnalysis>({
+  const { data, isLoading, error, refetch } = useQuery<PairAnalysis>({
     queryKey: ['pairAnalysis', stockA, stockB, minSpread, operationalCost],
-    queryFn: () => analyzePair(stockA, stockB, startDate, endDate, minSpread, operationalCost)
+    queryFn: () => analyzePair(stockA, stockB, startDate, endDate, minSpread, operationalCost),
+    enabled: false,
   });
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {(error as Error).message}</div>;
 
   return (
     <div className="p-4">
@@ -58,6 +57,25 @@ export const StockPairAnalyzer: React.FC = () => {
         />
       </div>
 
+      <button
+        type="button"
+        onClick={() => void refetch()}
+        disabled={isLoading || stockA === stockB}
+        className="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {isLoading ? 'Analisando...' : 'Analisar par'}
+      </button>
+
+      {stockA === stockB && (
+        <p className="mt-2 text-sm text-red-600">Informe duas ações diferentes.</p>
+      )}
+
+      {error && (
+        <p className="mt-4 rounded bg-red-50 p-3 text-red-700">
+          Não foi possível consultar a API: {(error as Error).message}
+        </p>
+      )}
+
       {data && (
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
@@ -76,23 +94,25 @@ export const StockPairAnalyzer: React.FC = () => {
           </div>
 
           {data.opportunities.length > 0 && (
-            <Plot
-              data={[
-                {
-                  x: data.opportunities.map(o => o.date),
-                  y: data.opportunities.map(o => o.difference),
-                  type: 'scatter',
-                  mode: 'lines',
-                  name: 'Spread'
-                }
-              ]}
-              layout={{
-                title: `Spread ${stockA}/${stockB}`,
-                xaxis: { title: 'Date' },
-                yaxis: { title: 'Spread (R$)' }
-              }}
-              style={{ width: '100%', height: '400px' }}
-            />
+            <Suspense fallback={<div className="rounded bg-white p-4">Carregando gráfico...</div>}>
+              <Plot
+                data={[
+                  {
+                    x: data.opportunities.map(o => o.date),
+                    y: data.opportunities.map(o => o.difference),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Spread'
+                  }
+                ]}
+                layout={{
+                  title: `Spread ${stockA}/${stockB}`,
+                  xaxis: { title: 'Date' },
+                  yaxis: { title: 'Spread (R$)' }
+                }}
+                style={{ width: '100%', height: '400px' }}
+              />
+            </Suspense>
           )}
         </div>
       )}

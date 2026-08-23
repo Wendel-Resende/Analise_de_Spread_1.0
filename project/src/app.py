@@ -1,6 +1,7 @@
 import streamlit as st
-from config.settings import PROJECT_ROOT, SRC_DIR
 import sys
+
+from src.config.settings import PROJECT_ROOT, SRC_DIR
 
 # Adiciona os diretórios necessários ao PYTHONPATH
 sys.path.extend([PROJECT_ROOT, SRC_DIR])
